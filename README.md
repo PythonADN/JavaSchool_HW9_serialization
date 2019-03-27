@@ -3,9 +3,9 @@
 Кеширующий прокси
 
 Некоторые методы могут выполняться очень долго, хочется иметь возможность кешировать результаты возврата. Иногда хочется чтобы результаты расчета могли сохраняться при перезапуске JVM.
-Например, у нас есть интерфейс Service c методом doHardWork(). Повторный вызов этого метода с теми же параметрами должен возвращать рассчитанный результат из кэша.
+Например, у нас есть интерфейс services.Service_1 c методом doHardWork(). Повторный вызов этого метода с теми же параметрами должен возвращать рассчитанный результат из кэша.
 
-    void run(Service service) {
+    void run(services.Service_1 service) {
         double r1 = service.doHardWork("work1", 10); //считает результат
         double r2 = service.doHardWork("work2", 5);  //считает результат
         double r3 = service.doHardWork("work1", 10); //результат из кеша
@@ -30,10 +30,10 @@
 Пример включения кеширования (можно менять названия классов, методов, аннотаций и атрибутов):
 
     CacheProxy cacheProxy = new CacheProxy(...);
-    Service service = cacheProxy.cache(new ServiceImpl());
+    services.Service_1 service = cacheProxy.cache(new services.Service_1_Impl());
     Loader loader = cacheProxy.cache(new LoaderImpl());
 
-    interface Service {
+    interface services.Service_1 {
         @Cache(cacheType = FILE, fileNamePrefix = "data", zip = true, identityBy = {String.class, double.class})
         List<String> run(String item, double value, Date date);
 
