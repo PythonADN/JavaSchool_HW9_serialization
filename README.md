@@ -5,11 +5,11 @@
 Некоторые методы могут выполняться очень долго, хочется иметь возможность кешировать результаты возврата. Иногда хочется чтобы результаты расчета могли сохраняться при перезапуске JVM.
 Например, у нас есть интерфейс Service c методом doHardWork(). Повторный вызов этого метода с теми же параметрами должен возвращать рассчитанный результат из кэша.
 
-void run(Service service) {
-    double r1 = service.doHardWork("work1", 10); //считает результат
-    double r2 = service.doHardWork("work2", 5);  //считает результат
-    double r3 = service.doHardWork("work1", 10); //результат из кеша
-}
+    void run(Service service) {
+        double r1 = service.doHardWork("work1", 10); //считает результат
+        double r2 = service.doHardWork("work2", 5);  //считает результат
+        double r3 = service.doHardWork("work1", 10); //результат из кеша
+    }
 
 Должна быть возможность тонкой настройки кеша:
 1.	Указывать с помощью аннотаций, какие методы кешировать и как: Просчитанный результат хранить в памяти JVM или сериализовывать в файле на диск.
@@ -27,16 +27,16 @@ void run(Service service) {
 
 Дизайн аннотаций, атрибутов  аннотаций, классов реализаций остается на ваш вкус. Код должен быть читаем, классы не перегружены логикой, классы должны лежать в нужных пакетах.
 
-      Пример включения кеширования (можно менять названия классов, методов, аннотаций и атрибутов):
+Пример включения кеширования (можно менять названия классов, методов, аннотаций и атрибутов):
 
-CacheProxy cacheProxy = new CacheProxy(...);
-Service service = cacheProxy.cache(new ServiceImpl());
-Loader loader = cacheProxy.cache(new LoaderImpl());
+    CacheProxy cacheProxy = new CacheProxy(...);
+    Service service = cacheProxy.cache(new ServiceImpl());
+    Loader loader = cacheProxy.cache(new LoaderImpl());
 
-interface Service {
-    @Cache(cacheType = FILE, fileNamePrefix = "data", zip = true, identityBy = {String.class, double.class})
-    List<String> run(String item, double value, Date date);
+    interface Service {
+        @Cache(cacheType = FILE, fileNamePrefix = "data", zip = true, identityBy = {String.class, double.class})
+        List<String> run(String item, double value, Date date);
 
-    @Cache(cacheType = IN_MEMORY, listList = 100_000)
-    List<String> work(String item);
-}
+        @Cache(cacheType = IN_MEMORY, listList = 100_000)
+        List<String> work(String item);
+    }
