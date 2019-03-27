@@ -13,7 +13,7 @@ public class Test {
         InvocationHandler handler = new CacheProxy(service_1);
         Service_1 proxyService_1 = (Service_1) Proxy.newProxyInstance(service_1.getClass().getClassLoader(), Service_1_Impl.class.getInterfaces(), handler);
 
-        List<String> list = proxyService_1.run("ttt", 10);
+        List<String> list = proxyService_1.run("tt", 10);
         System.out.println(list);
     }
 }

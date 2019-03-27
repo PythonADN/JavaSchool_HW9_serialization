@@ -28,7 +28,7 @@ import static annotations.CacheType.*;
 public @interface Cache {
     CacheType cacheType() default FILE;
     int[] identityBy() default {}; // какие аргументы игнорировать при поиске кеша
-    int listList() default -1;
+    int listSize() default -1;
     String fileNamePrefix() default "";
     boolean zip() default false;
 }

@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import annotations.Cache;
@@ -20,6 +21,7 @@ public class CacheProxy implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        Object result = null;
         boolean annotationExists = false;
         for (Annotation ann : method.getAnnotations()) {
             if (ann.annotationType() == Cache.class) {
@@ -34,11 +36,21 @@ public class CacheProxy implements InvocationHandler {
         Cache cacheAnnotation = method.getAnnotation(Cache.class); // получаем аннотацию Cache с которой будет смотреть заданные параметры
 
         if (cacheAnnotation.cacheType() == IN_MEMORY) { // кеш возможно из памяти
-            cahceMap.put(new Object[]{method, "ttt", 1}, method.invoke(o, args));
+            cahceMap.put(new Object[]{method, "tt", 10}, method.invoke(o,  "tt", 10));
             Object[] methodOfMap = findKeyParameter(method, args, cacheAnnotation.identityBy()); // проверяем по каким параметрам оценивать результат кеша (был ли такой кеш)
 
+            if (methodOfMap == null) {
+                result = method.invoke(o, args); // если в коллекции метода нет, то вызываем оригинальный метод
+                result = getResult(method, result); // по пункту 3 (отрезаем результат если это List)
+                cahceMap.put(new Object[]{method, args}, result);
+            }
+            else {
+                result = cahceMap.get(new Object[]{method, args});
+                System.out.println(result);
+                result = getResult(method, result); // по пункту 3 (отрезаем результат если это List)
+            }
         }
-
+        System.out.println(result);
 
         if (cacheAnnotation.cacheType() == FILE) { // кеш возможно из файла
             String fileName;
@@ -80,6 +92,19 @@ public class CacheProxy implements InvocationHandler {
             }
         }
         return null; // метод с такими аргументами в коллекции не найден
+    }
+
+    private Object getResult(Method method, Object result) throws Throwable{
+        Class<?> returnType = method.getReturnType();
+        // если метод возвращает список, вернуть только последние элементы. количество брать из аннотации
+        if (returnType == List.class) {
+            int listSize = method.getDeclaredAnnotation(Cache.class).listSize();
+            if (listSize != -1) {
+                List<?> listResult = (List)result;
+                return listResult.subList(listResult.size() - listSize, listResult.size());
+            }
+        }
+        return result;
     }
 
 }
