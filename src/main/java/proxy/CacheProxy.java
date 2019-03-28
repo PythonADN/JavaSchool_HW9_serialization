@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,8 +121,9 @@ public class CacheProxy implements InvocationHandler {
             int listSize = method.getDeclaredAnnotation(Cache.class).listSize();
             if (listSize != -1) {
                 List<?> listResult = (List) result;
-                if (listResult.size() > listSize)
-                    return listResult.subList(listResult.size() - listSize, listResult.size());
+                if (listResult.size() > listSize) {
+                    return new ArrayList<>(listResult.subList(listResult.size() - listSize, listResult.size()));
+                }
             }
         }
         return result;
