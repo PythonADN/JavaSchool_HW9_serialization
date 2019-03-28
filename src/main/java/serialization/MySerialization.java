@@ -1,8 +1,10 @@
+package serialization;
+
 import java.io.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class Serialization {
+public class MySerialization {
     public static void serialize(Serializable o, File file, boolean zip) {
         try {
             OutputStream outputStream = new FileOutputStream(file);
@@ -27,7 +29,6 @@ public class Serialization {
             if (zip) {
                 inputStream = new GZIPInputStream(inputStream);
             }
-
             try (ObjectInputStream stream = new ObjectInputStream(inputStream)) {
                 return (T) stream.readObject();
             }

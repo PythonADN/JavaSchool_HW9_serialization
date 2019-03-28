@@ -9,6 +9,6 @@ import static annotations.CacheType.*;
 
 
 public interface Service_1 {
-    @Cache(cacheType = IN_MEMORY, fileNamePrefix = "data", zip = true, identityBy = {1})
+    @Cache(cacheType = IN_MEMORY, fileNamePrefix = "data", zip = true, identityBy = {1}, listSize=10)
     List<String> run(String item, int value);
 }
